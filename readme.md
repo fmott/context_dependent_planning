@@ -12,13 +12,13 @@ Contains behavioural raw data, fMRI statistical maps and analysis scripts to rep
 
 * #### Code
 
-  * **generate_figure2.py:** Generates Figure 2.  
-  * **generate_figure3.py: ** Generates Figure 3.
-  * **generate_S2_figure.py: ** Generates S2 Figure.
-  * **generate_S1_table.R: ** Logistic regression of choice against task features underlying S1 table.
-  * **fit_choice_models.ipynb: ** Jupyter notebook implementing model fitting and computation of LOOIC for the three models PM, SM and HM. 
-  * **fit_RT_model.ipynb: ** Jupyter notebook implementing hierarchical Bayesian linear regression of response times against conflict and context.
+  * **generate_figure2.py:** Generates Figure 2. 
+  * **generate_figure3.py:** Generates Figure 3.
+  * **generate_S2_figure.py:** Generates S2 Figure.
+  * **generate_S1_table.R:** Logistic regression of choice against task features underlying S1 table.
+  * **fit_choice_models.ipynb:** Jupyter notebook implementing model fitting and computation of LOOIC for the three models PM, SM and HM. 
+  * **fit_RT_model.ipynb:** Jupyter notebook implementing hierarchical Bayesian linear regression of response times against conflict and context.
   * **parameter_recovery.ipynb:** Jupyter notebook implementing parameter recovery analysis for model HM.
-  * **backward_induction.py: ** Function used to compute expected long-term values via backward induction.
-  * **simulate_agents.py: ** Simulate behavior of agents using a planning, simple, hybrid or random strategy. 
+  * **backward_induction.py:** Function used to compute expected long-term values via backward induction.
+  * **simulate_agents.py:** Simulate behavior of agents using a planning, simple, hybrid or random strategy. 
 
