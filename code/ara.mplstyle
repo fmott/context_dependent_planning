@@ -1,0 +1,27 @@
+# default ara style
+
+axes.labelsize: 9
+axes.titlesize: 9
+axes.linewidth: 0.6
+axes.spines.top: False
+axes.spines.right: False
+axes.axisbelow: True
+axes.grid: True
+
+axes.prop_cycle: cycler('color', ['669363', '55A868', 'C44E52', '8172B2', 'CCB974', '64B5CD'])
+patch.facecolor: 669363
+
+xtick.labelsize: 7
+ytick.labelsize: 7
+legend.fontsize: 8
+
+font.family: sans-serif
+font.sans-serif: = Arial, Liberation Sans, DejaVu Sans, Bitstream Vera Sans, sans-serif
+
+grid.color: b2b2b2
+grid.linestyle: --
+grid.linewidth: 0.5
+
+
+
+savefig.dpi: 300
