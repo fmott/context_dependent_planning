@@ -32,6 +32,7 @@ nt = len(np.unique(dat['index']))
 
 #%% Select agent
 # agent_name = 'planning'
+# agent_name = 'planning_det'
 # agent_name = 'simple'
 agent_name = 'hybrid'
 # agent_name = 'random'
@@ -51,6 +52,21 @@ if agent_name =='planning':
     beta = summary_planning['mu_beta_dv']['mean'].to_numpy().squeeze()
     bias = summary_planning['mu_theta_basic']['mean'].to_numpy()
 
+if agent_name =='planning_det':
+    # Calculate DV based on backward induction. 
+    # Columns of DV are energy, offer value, trial, transition.
+    costs = np.array([[1,1], [2,1],[1,2],[2,2]]) # The four possible transitions
+    V = np.zeros((7,4,9,4)) # State-value function 
+    Q = np.zeros((7,4,2,8,4)) # Stat-action function 
+
+    for i in range(4):
+        V[:,:,:,i], Q[:,:,:,:,i] = ara_backward_induction(energy_cost_current = costs[i][0],energy_cost_future = costs[i][1],energy_bonus=(2.5/1.5))
+    
+    DV = Q[:,:,0,:,:] - Q[:,:,1,:,:] 
+    
+    beta = 100000
+    bias = 0
+    
 elif agent_name =='simple':
     # DV corresponds to centered offer value
     DV = np.zeros((7,4,8,4))
@@ -181,5 +197,5 @@ for s in range(ns): # vectorize if speed is needed
     
     agdat = agdat.append(agdat_tmp)
  
-timestr = time.strftime("%Y%m%d%H%M%S") 
-agdat.to_csv('sim_'+agent_name+'_posterior_mean_beta_bias_'+timestr+'.csv')    
+# timestr = time.strftime("%Y%m%d%H%M%S") 
+# agdat.to_csv('sim_'+agent_name+'_posterior_mean_beta_bias_'+timestr+'.csv')    
