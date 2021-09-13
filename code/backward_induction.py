@@ -26,7 +26,7 @@ def ara_backward_induction(energy_cost_current = 1,energy_cost_future = 1,energy
     V[:,:,0] = final_reward
     
     # loop through the statespace and timesteps
-    # Note1: If speed is needed, vectorize and use tranision matrix 
+    # Note1: If speed is needed, vectorize and use tranistion matrix 
     # Note2: Since we are implicitly looping backwards, the future 
     # segment comes first
     for t in range(n_trial):
@@ -77,7 +77,7 @@ def ara_backward_induction(energy_cost_current = 1,energy_cost_future = 1,energy
 costs = np.array([[1,1], [2,1],[1,2],[2,2]]) # The four possible transitions
 energy_bonus=2.5/1.5
 V = np.zeros((7,4,9,4)) # State-value function 
-Q = np.zeros((7,4,2,8,4)) # Stat-action function 
+Q = np.zeros((7,4,2,8,4)) # State-action function 
 
 for i in range(4):
     V[:,:,:,i], Q[:,:,:,:,i] = ara_backward_induction(energy_cost_current = costs[i][0],energy_cost_future = costs[i][1],energy_bonus=energy_bonus)
