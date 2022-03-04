@@ -14,32 +14,35 @@ import matplotlib.gridspec as gsp
 plt.style.use('./ara.mplstyle')
 
 #%% Load behavioural data 
-filename = glob.glob('../data/behaviour/data_all_partipants_20210623102746.csv')
+filename = glob.glob('../data/behaviour/data_all_participants_20220215120148.csv')
 dat = pd.read_csv(filename[0],index_col = 0)
 
 #%% Load model data
 # Posterior mean and credibility intervals of estimated parameters
-with open("../data/model/summary_hybrid_20210621151244.pkl", "rb") as f:
+with open('../data/model/summary_HM_20220216143030.pkl', 'rb') as f:
     summary_hybrid = pickle.load(f)['summary']
 
 # Posterior samples
-filename = glob.glob('../data/model/posterior_samples_hybrid_20210702153146.csv') 
-samples_hybrid = pd.read_csv(filename[0],index_col = 0)
+with open('../data/model/samples_HM_20220216143030.pkl', 'rb') as f:
+    samples_hybrid = pickle.load(f)['posterior_samples']
+
 
 # Posterior predictive simulations 
-filename = glob.glob('../data/model/ppc_hybrid_20210702153146.csv') 
-ppc_hybrid = pd.read_csv(filename[0],index_col = None, header = None).to_numpy() == 0
+filename = glob.glob('../data/model/ppc_HM_20220216143030.csv') 
+ppc_hybrid = pd.read_csv(filename[0],index_col = False).to_numpy() == 0
 
-filename = glob.glob('../data/model/ppc_simple_20210906104206.csv') 
-ppc_simple = pd.read_csv(filename[0],index_col = None, header = None).to_numpy() == 0
+filename = glob.glob('../data/model/ppc_SM_20220216142726.csv') 
+ppc_simple = pd.read_csv(filename[0],index_col = False).to_numpy() == 0
 
-filename = glob.glob('../data/model/ppc_planning_20210906104206.csv') 
-ppc_planning = pd.read_csv(filename[0],index_col = None, header = None).to_numpy() == 0
+filename = glob.glob('../data/model/ppc_PM_20220216142741.csv') 
+ppc_planning = pd.read_csv(filename[0],index_col = False).to_numpy() == 0
 
 # LOOIC for model comparison plot
-filename = glob.glob('../data/model/model_comparison.csv') 
-looic = pd.read_csv(filename[0],index_col = 0)
-
+filename = glob.glob('../data/model/model_comparison_main.csv') 
+looic_df = pd.read_csv(filename[0],index_col = 0)
+looic = looic_df['LOOIC'].to_numpy()
+looic_se = looic_df['SE'].to_numpy()
+names = list(looic_df.index)
 #%% Calculate choice frequencies
 # Create subset of the data like it was used during fitting
 idx = (dat['timeout'] == 0)
@@ -218,15 +221,17 @@ ax0.text(-0.1,1.1,'A',transform=ax0.transAxes,horizontalalignment='center',verti
 ##############################################################################
 # Subplot 2 - Model comparison 
 ##############################################################################  
-y = np.flip(looic.loc[:,['LOOIC']].to_numpy().squeeze())
+sort_idx = np.flip(np.argsort(looic))
 x = [0,1,2]
-yerr = np.flip(looic.loc[:,['SE']].to_numpy().squeeze())
+y = looic[sort_idx]
+yerr = looic_se[sort_idx]
+bar_name = [names[i] for i in sort_idx]
 
 ax1.bar(x,y,yerr = yerr,edgecolor='black',color=[0.7,0.7,0.7])
 ax1.set_xticks(x)
-ax1.set_xticklabels(['PM','SM','HM'],fontsize = 9,rotation=90)
-ax1.set_ylim(3000,5200) 
-ax1.text(0.83, 0.4, '*', horizontalalignment='center',verticalalignment='center', transform=ax1.transAxes,fontsize=15,fontweight='bold')
+ax1.set_xticklabels([bar_name[0][0:2],bar_name[1][0:2],bar_name[2][0:2] ],fontsize = 9,rotation=90)
+ax1.set_ylim(3000,4800) 
+ax1.text(0.83, 0.32, '*', horizontalalignment='center',verticalalignment='center', transform=ax1.transAxes,fontsize=15,fontweight='bold')
 ax1.set_ylabel('LOOIC')
 ax1.set_title('Model \n comparison',fontweight='bold')
 ax1.text(-0.1,1.1,'B',transform=ax1.transAxes,horizontalalignment='center',verticalalignment='center',fontsize=10,fontweight='bold')
@@ -269,8 +274,8 @@ ax2.text(-0.1,1.1,'C',transform=ax2.transAxes,horizontalalignment='center',verti
 ##############################################################################
 # Subplot 4 - Parameters of the winning hybrid model 
 ##############################################################################
-param_names_tmp = ['mu_beta_dv','mu_theta_basic_1','mu_theta_basic_2','mu_theta_basic_3','mu_theta_basic_4','theta_full_energy','theta_low_energy_LC','theta_low_energy_HC']
-xticklabels = [r'$\beta_{plan}$',r'$\theta_{O1}$',r'$\theta_{O2}$',r'$\theta_{O3}$',r'$\theta_{O4}$',r'$\theta_{maxE}$',r'$\theta_{minE\_LC}$',r'$\theta_{minE\_HC}$']
+param_names_tmp = ['mu_beta_dv_23','mu_beta_dv_14','mu_theta_basic_1','mu_theta_basic_2','mu_theta_basic_3','mu_theta_basic_4','theta_full_energy','theta_low_energy_LC','theta_low_energy_HC']
+xticklabels = [r'$\beta_{plan23}$',r'$\beta_{plan14}$',r'$\theta_{O1}$',r'$\theta_{O2}$',r'$\theta_{O3}$',r'$\theta_{O4}$',r'$\theta_{maxE}$',r'$\theta_{minE\_LC}$',r'$\theta_{minE\_HC}$']
 
 for i, param in enumerate(param_names_tmp):   
     # Plot PDF
@@ -298,12 +303,14 @@ for i, param in enumerate(param_names_tmp):
         ax3.scatter(i+jitter,summary_hybrid['theta_basic_3']['mean'],edgecolor='black',facecolor='white',alpha=0.3,s=10,marker='.',linewidth=1,zorder=0)
     elif (param == 'mu_theta_basic_4'):
         ax3.scatter(i+jitter,summary_hybrid['theta_basic_4']['mean'],edgecolor='black',facecolor='white',alpha=0.3,s=10,marker='.',linewidth=1,zorder=0)
-    elif (param == 'mu_beta_dv'):
-        ax3.scatter(i+jitter,summary_hybrid['beta_dv']['mean'],edgecolor='black',facecolor='white',alpha=0.3,s=10,marker='.',linewidth=1,zorder=0)
+    elif (param == 'mu_beta_dv_23'):
+        ax3.scatter(i+jitter,summary_hybrid['beta_dv_23']['mean'],edgecolor='black',facecolor='white',alpha=0.3,s=10,marker='.',linewidth=1,zorder=0)
+    elif (param == 'mu_beta_dv_14'):
+        ax3.scatter(i+jitter,summary_hybrid['beta_dv_14']['mean'],edgecolor='black',facecolor='white',alpha=0.3,s=10,marker='.',linewidth=1,zorder=0)
     elif (param == 'mu_theta_basic'):
         ax3.scatter(i+jitter,summary_hybrid['theta_basic']['mean'],edgecolor='black',facecolor='white',alpha=0.3,s=10,marker='.',linewidth=1,zorder=0)
         
-ax3.hlines(0,xmin=-0.5,xmax= 8,color='black',linestyle=':',zorder=0)
+ax3.hlines(0,xmin=-0.5,xmax= 9,color='black',linestyle=':',zorder=0)
 
 ax3.set_title('Estimated parameters:\nHybrid strategy model',fontweight='bold')
 ax3.set_xticks(range(len(param_names_tmp)))
@@ -314,6 +321,5 @@ ax3.text(-0.1,1.1,'D',transform=ax3.transAxes,horizontalalignment='center',verti
 gsp.GridSpec(nrows=1,ncols=3,figure=fig,wspace=0.1)
 plt.tight_layout()
 timestr = time.strftime("%Y%m%d%H%M%S")
-# fig.savefig('fig2_' + timestr + '.tif', dpi=300, bbox_inches='tight', transparent=False)
-# fig.savefig('fig2_' + timestr + '.png', dpi=300, bbox_inches='tight', transparent=False)
+# fig.savefig('fig2_' + timestr + '.tif', dpi=1000, bbox_inches='tight', transparent=False)
 
