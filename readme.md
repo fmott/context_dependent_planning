@@ -1,6 +1,6 @@
 ## Forward planning driven by context-dependent conflict processing in anterior cingulate cortex - Analysis code and datasets
 
-**Cite:** Ott, F., Legler, E., & Kiebel, S. J. (2021). Forward planning driven by context-dependent conflict processing in anterior cingulate cortex. bioRxiv 2021. https://biorxiv.org/content/10.1101/2021.07.19.452905 
+**Cite:** Ott, F., Legler, E., & Kiebel, S. J. (2022). Forward planning driven by context-dependent conflict processing in anterior cingulate cortex. NeuroImage, 256, 119222.
 
 The repository contains behavioural raw data, fMRI statistical maps and analysis scripts to reproduce the result of the study. 
 
